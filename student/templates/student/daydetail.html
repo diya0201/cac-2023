@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data for Day {{ day }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #C8EAF5;
+            color: #8C54D0;
+            text-align: center;
+            padding: 60px 0;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            transition: background-color 0.3s;
+            background-color: #9DBBD8;
+        }
+        .btn:hover {
+            background-color: #8C54D0;
+            color: #C8EAF5;
+        }
+        form {
+            margin: 20px auto;
+            max-width: 300px;
+        }
+        form button {
+            background-color: #9DBBD8;
+            color: #8C54D0;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #8C54D0;
+            color: #C8EAF5;
+        }
+        audio {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Data for Day {{ day }}</h1>
+
+    <a href="{% url 'student_calendar' group_id=group_id%}" class="btn">Back to Calendar</a>
+    <a href="{% url 'analytics' group_id=group_id %}" class="btn">Analytics</a>
+    <div id="saveTimeUrl" data-url="{% url 'save_time' day=day month=month year=year group_id=group_id %}" style="display:none;"></div>
+
+    <h3>Upload Text</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Upload</button>
+    </form>
+
+    <h3>Uploaded Texts</h3>
+    {% for text in texts %}
+    <div>
+        <p>{{ text.content }}</p>
+        <small>Uploaded on: {{ text.timestamp }}</small>
+    </div>
+    <hr>
+    {% endfor %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ file_form.as_p }}
+        <button type="submit">Upload File</button>
+    </form>
+
+    {% for file in uploaded_files %}
+    <audio controls>
+        <source src="{{ file.file.url }}" type="audio/wav">  <!-- Adjust the MIME type as needed -->
+        Your browser does not support the audio element.
+    </audio>
+    <br>
+    {% endfor %}
+
+    <div id="timer">{{ practice_time }}</div>
+
+
+
+    <button onclick="startTimer()" class="btn">Start</button>
+    <button onclick="stopTimer()" class="btn">Stop</button>
+
+    <script>
+    let timer;
+    let count = {{ practice_time }};
+    let practiceTimeInMinutes = Math.floor(practice_time / 60);
+    let practiceTimeInSeconds = practice_time % 60;
+    document.getElementById('timer').innerText = `${practiceTimeInMinutes}:${practiceTimeInSeconds.toString().padStart(2, '0')}`;
+
+    function startTimer() {
+        // If a timer is already running, clear it first
+        if (timer) {
+            clearInterval(timer);
+        }
+
+        timer = setInterval(function() {
+            count++;
+            let minutes = Math.floor(count / 60);
+            let seconds = count % 60;
+            document.getElementById('timer').innerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 1000); // Update every second
+    }
+
+    function stopTimer() {
+        clearInterval(timer);
+        savePracticeTime();
+    }
+
+function savePracticeTime() {
+    let practiceTime = count;  // Assuming 'count' is the timer variable
+    let saveTimeUrl = document.getElementById('saveTimeUrl').getAttribute('data-url');
+    // Send data to Django using AJAX
+    fetch(saveTimeUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'  // CSRF token for Django
+        },
+        body: JSON.stringify({
+            'practice_time': practiceTime,
+            'date': '{{ day.date }}'  // Assuming 'day' is the context variable for the day's data
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.message);
+    });
+}
+
+</script>
+</body>
+</html>

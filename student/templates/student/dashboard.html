@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #C8EAF5;
+            color: #8C54D0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 2em 10%;
+            gap: 2em;  /* Adding some space between columns */
+        }
+
+        .dashboard-content, .game-section, .group-section {
+            width: 31%; /* Distributing the space for columns */
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            padding: 2em;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #8C54D0;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #6A32C1;
+        }
+
+        .piggy-bank {
+            position: absolute;
+            top: 2em;
+            right: 2em;
+            width: 50px;
+            height: 50px;
+            background-color: #8C54D0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #C8EAF5;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="piggy-bank">
+        {{ user.profile.coins|default:"0" }}
+    </div>
+
+    <div class="container">
+        <!-- Dashboard Content Section -->
+        <div class="dashboard-content">
+            <h2>Dashboard</h2>
+            <p>Welcome to your dashboard! Here you can find your progress, stats, and more.</p>
+        </div>
+
+        <!-- Your Groups Section -->
+        <div class="group-section">
+            <h2>Your Groups</h2>
+            <ul>
+                {% for group in groups %}
+                    <li><a href="{% url 'student_calendar' group_id=group.id %}">{{ group.name }}</a></li>
+                {% endfor %}
+            </ul>
+            <h2>Join a New Group</h2>
+        {% if messages %}
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+{% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <label for="{{ form.join_code.id_for_label }}">Join Code:</label>
+            {{ form.join_code }}
+            <br>
+            <button type="submit">Join Group</button>
+        </form>
+        </div>
+
+        <!-- Game Section -->
+        <div class="game-section">
+            <h2>Games</h2>
+            <p>Want to play a game and test your skills? Click below!</p>
+            <a href="{% url 'beat_the_met' %}" class="btn">Play Beat the Metronome!</a>
+        </div>
+    </div>
+</body>
+</html>

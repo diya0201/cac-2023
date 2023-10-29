@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Class List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #C8EAF5;
+            color: #8C54D0;
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .group-list, .create-group {
+            flex: 1;
+            max-width: 40%;
+            background-color: #E7F2FA;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        a {
+            color: #8C54D0;
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #9DBBD8;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        form button {
+            background-color: #9DBBD8;
+            color: #8C54D0;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #8C54D0;
+            color: #C8EAF5;
+        }
+
+        .music-note {
+            font-size: 40px;
+            margin: 10px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="group-list">
+        <h1>Your Groups</h1>
+        <ul>
+            {% for group in groups %}
+                <li><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>
+            {% endfor %}
+        </ul>
+        <div class="music-note">♫</div>
+    </div>
+    <div class="create-group">
+        <h2>Create a New Group</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="{{ form.name.id_for_label }}">Group Name:</label>
+            {{ form.name }}
+            <label for="{{ form.join_code.id_for_label }}">Join Code:</label>
+            {{ form.join_code }}
+            <label for="{{ form.join_code.id_for_label }}">Practice Goal in Minutes:</label>
+            {{ form.practice_goal }}
+            <button type="submit">Create Group</button>
+        </form>
+        <div class="music-note">♪</div>
+    </div>
+</div>
+
+</body>
+</html>

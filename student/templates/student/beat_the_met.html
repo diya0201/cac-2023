@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Beat the Metronome</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #C8EAF5;
+            color: #8C54D0;
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            transition: background-color 0.3s;
+            background-color: #9DBBD8;
+        }
+
+        .btn:hover {
+            background-color: #8C54D0;
+            color: #C8EAF5;
+        }
+
+        .piggy-bank {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #9DBBD8;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 20px;
+        }
+
+        .coin-count {
+            margin-left: 10px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="piggy-bank">
+        🐖<span class="coin-count">{{ user.profile.coins }}</span>
+    </div>
+
+    <p style="font-size: 50px;">♫ ♪ ♬</p>
+    <h1>Beat the Metronome</h1>
+    <p>High Score: {{ high_score_met }}</p>
+    <p>Target: {{ target }}</p>
+    <p>Time left: <span id="timeLeft">10</span> seconds</p>
+
+    <form id="updateHighScore" method="post" action="{% url 'update_high_score_met' %}">
+        {% csrf_token %}
+        <input type="hidden" name="new_score" id="new_score">
+        <input type="hidden" name="high_score" id="high_score">
+        <button type="button" onclick="Tap()" class="btn">Tap</button>
+    </form>
+
+    <script>
+        let tap_count = 0;
+let timeLeft = 10;
+let isCounting = false;
+let timer;
+let countdown;
+
+function Tap() {
+    if (!isCounting) {
+        startCounting();
+    }
+    tap_count++;
+}
+
+function startCounting() {
+    isCounting = true;
+
+    countdown = setInterval(function() {
+        timeLeft--;
+        document.getElementById("timeLeft").innerText = timeLeft;
+
+        if (timeLeft <= 0) {
+            setTimeout(stopCounting);
+        }
+    }, 1000);
+
+    timer = setTimeout(function() {
+        let bpm = tap_count*6;
+        let target = {{ target }};
+        let hisc = {{ high_score_met }};
+        let score = 1000-((target-bpm)**2);
+        if (score<0){
+            score=0;
+        }
+        alert("Time's up! Your bpm was " + bpm + ". And your score was "+score);
+
+        document.getElementById("new_score").value = score;
+        document.getElementById("high_score").value = hisc;
+        document.getElementById("updateHighScore").submit();
+        reset();
+    }, 10000);
+}
+
+
+function stopCounting() {
+    clearTimeout(timer);
+    clearInterval(countdown);  // Clear the interval here as well, for good measure
+    isCounting = false;
+}
+
+function reset() {
+    tap_count = 0;
+    timeLeft = 10;
+    document.getElementById("tapDisplay").innerText = "0";
+    document.getElementById("timeLeft").innerText = "10";
+    isCounting = false;
+}
+
+    </script>
+</body>
+</html>

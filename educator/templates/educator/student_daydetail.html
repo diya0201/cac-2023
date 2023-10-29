@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data for Day {{ day }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #C8EAF5;
+            color: #8C54D0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .music-note {
+            position: absolute;
+            font-size: 3em;
+            opacity: 0.2;
+        }
+        .note1 { top: 10%; left: 5%; }
+        .note2 { top: 40%; right: 5%; transform: rotate(20deg); }
+        .note3 { bottom: 10%; left: 15%; transform: rotate(-15deg); }
+        .note4 { bottom: 40%; right: 15%; transform: rotate(15deg); }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            transition: background-color 0.3s;
+            background-color: #9DBBD8;
+        }
+        .btn:hover {
+            background-color: #8C54D0;
+            color: #C8EAF5;
+        }
+        audio {
+            margin: 20px 0;
+            width: 90%;
+        }
+        .content-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px;
+            border: 2px solid #8C54D0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .texts, .files {
+            width: 48%;
+            border: 2px solid #8C54D0;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h3 {
+            border-bottom: 2px solid #8C54D0;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Music Notes -->
+    <div class="music-note note1">♫</div>
+    <div class="music-note note2">♪</div>
+    <div class="music-note note3">♬</div>
+    <div class="music-note note4">♩</div>
+
+    <h1>Data for Day {{ day }}</h1>
+    <div class="content-container">
+        <!-- Texts Column -->
+        <div class="texts">
+            <h3>Uploaded Texts</h3>
+            {% for text in texts %}
+                <div>
+                    <p>{{ text.content }}</p>
+                    <small>Uploaded on: {{ text.timestamp }}</small>
+                </div>
+                <hr>
+            {% endfor %}
+        </div>
+
+        <!-- Files Column -->
+        <div class="files">
+            <h3>Uploaded Files</h3>
+            {% for file in uploaded_files %}
+                <audio controls>
+                    <source src="{{ file.file.url }}" type="audio/wav">  <!-- Adjust the MIME type as needed -->
+                    Your browser does not support the audio element.
+                </audio>
+            {% endfor %}
+        </div>
+    </div>
+    <div>
+        Practice Time: <span id="timer">{{ practice_time }}</span>
+    </div>
+
+    <script>
+        let count = {{ practice_time }};
+        let practiceTimeInMinutes = Math.floor(count / 60);
+        let practiceTimeInSeconds = count % 60;
+        document.getElementById('timer').innerText = `${practiceTimeInMinutes}:${practiceTimeInSeconds.toString().padStart(2, '0')}`;
+    </script>
+</body>
+</html>

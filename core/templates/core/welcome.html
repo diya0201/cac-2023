@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to Our App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #C8EAF5;
+            color: #8C54D0;
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #9DBBD8;
+            color: #8C54D0;
+        }
+
+        .btn-primary:hover {
+            background-color: #8C54D0;
+            color: #C8EAF5;
+        }
+    </style>
+</head>
+<body>
+<p style="font-size: 50px;">♫ ♪ ♬</p>
+<h1>Practice Makes Perfect</h1>
+<p>Welcome to the one_stop solution for all your practicing needs :)</p>
+
+<a href="{% url 'signin' %}" class="btn btn-primary">Sign In</a>
+<a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+
+</body>
+</html>
